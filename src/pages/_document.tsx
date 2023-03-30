@@ -6,6 +6,7 @@ const globalStyles = css`
     margin: 0;
     padding: 0;
     background-color: ${colors.primaryDark};
+    color: ${colors.light};
   }
 `;
 export default function Document() {
