@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import styled from '@emotion/styled';
 import { colors } from '@/styles/constants';
 
@@ -7,7 +7,7 @@ type Props = {
   icon: any;
   type?: string;
   value?: string | number;
-  onChange?: any;
+  setValue: Dispatch<SetStateAction<string>>;
 };
 
 const Input = styled.input`
@@ -42,7 +42,7 @@ const InputWithIcon = ({
   icon,
   type = 'text',
   value,
-  onChange,
+  setValue,
 }: Props) => {
   return (
     <InputContainer>
@@ -50,7 +50,7 @@ const InputWithIcon = ({
         type={type}
         placeholder={placeholder}
         value={value}
-        onChange={onChange}
+        onChange={(e) => setValue(e.target.value)}
       />
       <IconContainer>{icon}</IconContainer>
     </InputContainer>
