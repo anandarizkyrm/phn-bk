@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/client';
 import Image from 'next/image';
 import { others } from '@/styles/constants';
 import { FaSpinner } from 'react-icons/fa';
+import { ContactType } from '..';
 
 const index = () => {
   const router = useRouter();
@@ -13,8 +14,7 @@ const index = () => {
     variables: { id },
   });
 
-  const [contact, setContact] = useState({});
-  console.log(data?.contact_by_pk, contact);
+  const [contact, setContact] = useState<ContactType | undefined>();
 
   useEffect(() => {
     setContact(data?.contact_by_pk);
@@ -27,7 +27,7 @@ const index = () => {
         <div>
           <Image
             src={others.avatar}
-            alt={contact?.first_name}
+            alt="Contact Name"
             width="100"
             height={'100'}
           ></Image>
@@ -36,7 +36,7 @@ const index = () => {
           </h3>
         </div>
       )}
-      {error ? <h3>Data Not Found</h3> : null}
+      {error ? <h3>Data {id} Not Found</h3> : null}
     </>
   );
 };

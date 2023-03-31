@@ -1,28 +1,32 @@
 import InputWithIcon from '@/components/molecules/InputWithIcon';
-import { useQuery } from '@apollo/client';
+import { ApolloError } from '@apollo/client';
 import { GET_CONTACT_LIST } from '../../api/gql';
-import { FaSearch, FaSpinner } from 'react-icons/fa';
-import styled from '@emotion/styled';
+import { FaSearch } from 'react-icons/fa';
 import CardContact from '@/components/molecules/CardContact';
 import { others } from '@/styles/constants';
 import { useEffect, useState } from 'react';
+import Navigation from '@/components/organisms/Navigation';
+import { client } from './_app';
+import Pagination from '@/components/molecules/Pagination';
 
-interface ContactType {
+export interface ContactType {
   first_name: string;
   last_name: string;
   phones: any[];
   id: string;
 }
 
-const Container = styled.div`
-  padding: 30px 20px;
-`;
-
-export default function Home() {
-  const { loading, error, data } = useQuery(GET_CONTACT_LIST);
+export default function Home({
+  data,
+  error,
+}: {
+  data: any;
+  error: ApolloError | undefined;
+}) {
   const [search, setSearch] = useState('');
-  const [filteredContact, setFilteredContact] = useState<ContactType[]>([]);
-  console.log(data?.contact, search, filteredContact);
+  const [filteredContact, setFilteredContact] = useState<ContactType[]>(
+    data.contact
+  );
 
   useEffect(() => {
     if (search.length > 0) {
@@ -36,28 +40,25 @@ export default function Home() {
       );
     }
 
-    if (search === '' && !loading) {
+    if (search === '') {
       setFilteredContact(data.contact);
     }
   }, [search]);
 
   useEffect(() => {
-    if (!loading) {
-      setFilteredContact(data.contact);
-    }
-  }, [loading]);
+    setFilteredContact(data.contact);
+  }, [data]);
+  console.log(data);
   return (
-    <Container>
-      <InputWithIcon
-        value={search}
-        setValue={setSearch}
-        icon={<FaSearch className="icon" />}
-        placeholder="Search . . . "
-      ></InputWithIcon>
-      {loading ? (
-        <FaSpinner />
-      ) : (
-        filteredContact.map((contact: ContactType) => (
+    <Navigation title="Contact">
+      <div>
+        <InputWithIcon
+          value={search}
+          setValue={setSearch}
+          icon={<FaSearch className="icon" />}
+          placeholder="Search . . . "
+        ></InputWithIcon>
+        {filteredContact.map((contact: ContactType) => (
           <CardContact
             key={contact.id}
             id={contact.id}
@@ -65,10 +66,30 @@ export default function Home() {
             imageUrl={others.avatar}
             phoneNumber={contact?.phones[0]?.number}
           />
-        ))
-      )}
+        ))}
 
-      {!loading && filteredContact.length == 0 ? <h1>No Data</h1> : null}
-    </Container>
+        {filteredContact.length == 0 ? <h1>No Data</h1> : null}
+        {error ? <h1>Something went wrong, please try again later</h1> : null}
+        <Pagination />
+      </div>
+    </Navigation>
   );
+}
+
+export async function getServerSideProps(context: any) {
+  const { offset } = context.query;
+
+  try {
+    const { data } = await client.query({
+      query: GET_CONTACT_LIST,
+      variables: {
+        limit: 5,
+        offset: offset ? parseInt(offset) : 0,
+      },
+    });
+
+    return { props: { data } };
+  } catch (error) {
+    return { props: { error: error } };
+  }
 }
