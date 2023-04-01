@@ -16,7 +16,7 @@ const PaginationWrapper = styled.div`
 `;
 
 const Pagination = (props: Props) => {
-  const { limit = 5 } = props;
+  const { limit = 10 } = props;
   const [page, setPage] = useState(1);
   const router = useRouter();
   function handleButtonClick(type: 'prev' | 'next') {

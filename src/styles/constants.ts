@@ -6,5 +6,5 @@ export const colors = {
 };
 
 export const others = {
-  avatar: 'https://i.pravatar.cc/150?u=6',
+  avatar: 'https://www.gravatar.com/avatar/HASH?s=150&r=pg&d=mp',
 };

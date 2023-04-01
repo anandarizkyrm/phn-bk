@@ -1,12 +1,15 @@
 import ContactForm from '@/components/molecules/ContactForm';
+import Navigation from '@/components/organisms/Navigation';
 import React from 'react';
 
 const index = () => {
   return (
-    <div>
-      Create Contact
-      <ContactForm />
-    </div>
+    <Navigation title="Create Contact">
+      <div>
+        Create Contact
+        <ContactForm />
+      </div>
+    </Navigation>
   );
 };
 
