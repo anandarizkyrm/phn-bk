@@ -19,7 +19,9 @@ const Navigation = (props: Props) => {
   const { children, title } = props;
   return (
     <div>
-      <h2>{title}</h2>
+      <Link href={'/'}>
+        <h2>{title}</h2>
+      </Link>
       <ChildrenContainer>{children}</ChildrenContainer>
       <Link href="/create">
         <FloatingButton icon={<FaPlus style={{ fontSize: '22px' }} />} />

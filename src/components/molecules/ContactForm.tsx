@@ -21,7 +21,6 @@ export default function ContactForm() {
     }
     return remove(index);
   }
-  console.log(errors, phoneFields);
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -76,16 +75,26 @@ export default function ContactForm() {
           {errors?.phones?.[index] && (
             <p>{errors?.phones[index]?.number?.message}</p>
           )}
-          <button type="button" onClick={() => append({ number: '' })}>
+          <button
+            data-testid="add-phone-number-field"
+            type="button"
+            onClick={() => append({ number: '' })}
+          >
             Add Number
           </button>
-          <button type="button" onClick={() => handleRemovePhoneNumber(index)}>
+          <button
+            data-testid="remove-phone-number-field"
+            type="button"
+            onClick={() => handleRemovePhoneNumber(index)}
+          >
             Remove Phone
           </button>
         </div>
       ))}
 
-      <button type="submit">Add</button>
+      <button data-testid="submit-btn" type="submit">
+        Add
+      </button>
     </form>
   );
 }

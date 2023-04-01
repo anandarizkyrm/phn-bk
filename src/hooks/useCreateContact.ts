@@ -1,6 +1,12 @@
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { ADD_CONTACT_WITH_PHONE, GET_CONTACT_LIST } from '../../api/gql';
+import { useMutation } from '@apollo/client';
+import toast from 'react-hot-toast';
+// import { useRouter } from 'next/router';
+
+// ...
 
 interface FieldContact {
   first_name: string;
@@ -9,17 +15,15 @@ interface FieldContact {
 }
 
 function useCreateContact() {
-  // const schema: yup.SchemaOf<FieldContact> = yup.object().shape({
-  //   email: yup
-  //     .string()
-  //     .required('email harus diisi')
-  //     .email('harus menggunakan format email'),
-
-  //   password: yup
-  //     .string()
-  //     .required('password harus diisi')
-  //     .min(8, 'password minimal 8 karakter'),
-  // });
+  // const router = useRouter();
+  const [addContact, { error }] = useMutation(ADD_CONTACT_WITH_PHONE, {
+    onCompleted: () => {
+      // i need to reload the page cause if not the state is not updated
+      // need refactor
+      window.location.href = '/';
+    },
+    refetchQueries: [{ query: GET_CONTACT_LIST }],
+  });
 
   const schema = Yup.object().shape({
     first_name: Yup.string().required(),
@@ -58,8 +62,22 @@ function useCreateContact() {
   });
 
   const onSubmit = async (data: FieldContact) => {
-    // loginFunction(data);
-    console.log(data);
+    toast.promise(
+      addContact({
+        variables: {
+          first_name: data.first_name,
+          last_name: data.last_name,
+          phones: data.phones.map((phone: { number: string }) => {
+            return { number: phone.number };
+          }),
+        },
+      }),
+      {
+        loading: 'Saving...',
+        success: 'Contact Saved!',
+        error: error?.message || 'Error saving',
+      }
+    );
   };
 
   const watchField = (field: keyof FieldContact) => watch(field);

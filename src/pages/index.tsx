@@ -1,14 +1,19 @@
 import InputWithIcon from '@/components/molecules/InputWithIcon';
-import { ApolloError } from '@apollo/client';
-import { GET_CONTACT_LIST } from '../../api/gql';
-import { FaSearch } from 'react-icons/fa';
-import CardContact from '@/components/molecules/CardContact';
+import { FaSearch, FaSpinner } from 'react-icons/fa';
 import { others } from '@/styles/constants';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Navigation from '@/components/organisms/Navigation';
-import { client } from './_app';
 import Pagination from '@/components/molecules/Pagination';
+import dynamic from 'next/dynamic';
+import { MakeItCentered } from '@/styles';
+import { ContactListContext } from '@/context/contacts';
 
+const CardContact = dynamic(
+  () => import('@/components/molecules/CardContact'),
+  {
+    ssr: false,
+  }
+);
 export interface ContactType {
   first_name: string;
   last_name: string;
@@ -16,22 +21,16 @@ export interface ContactType {
   id: string;
 }
 
-export default function Home({
-  data,
-  error,
-}: {
-  data: any;
-  error: ApolloError | undefined;
-}) {
+export default function Home() {
   const [search, setSearch] = useState('');
-  const [filteredContact, setFilteredContact] = useState<ContactType[]>(
-    data.contact
-  );
+  const { contactList, loading, error } = useContext(ContactListContext);
+  const [filteredContact, setFilteredContact] =
+    useState<ContactType[]>(contactList);
 
   useEffect(() => {
     if (search.length > 0) {
       setFilteredContact(
-        data?.contact.filter((c: ContactType) => {
+        contactList?.filter((c: ContactType) => {
           return (
             c.first_name.toLowerCase().includes(search.toLowerCase()) ||
             c.last_name.toLowerCase().includes(search.toLowerCase())
@@ -41,14 +40,14 @@ export default function Home({
     }
 
     if (search === '') {
-      setFilteredContact(data.contact);
+      setFilteredContact(contactList);
     }
   }, [search]);
 
   useEffect(() => {
-    setFilteredContact(data.contact);
-  }, [data]);
-  console.log(data);
+    setFilteredContact(contactList);
+  }, [contactList]);
+
   return (
     <Navigation title="Contact">
       <div>
@@ -58,38 +57,53 @@ export default function Home({
           icon={<FaSearch className="icon" />}
           placeholder="Search . . . "
         ></InputWithIcon>
-        {filteredContact.map((contact: ContactType) => (
-          <CardContact
-            key={contact.id}
-            id={contact.id}
-            name={contact.first_name + ' ' + contact.last_name}
-            imageUrl={others.avatar}
-            phoneNumber={contact?.phones[0]?.number}
-          />
-        ))}
+        <div style={{ marginTop: '22px' }}>
+          {loading ? (
+            <MakeItCentered>
+              <FaSpinner />
+            </MakeItCentered>
+          ) : (
+            filteredContact.map((contact: ContactType) => (
+              <CardContact
+                key={contact.id}
+                id={contact.id}
+                name={contact.first_name + ' ' + contact.last_name}
+                imageUrl={others.avatar}
+                phoneNumber={contact?.phones[0]?.number}
+              />
+            ))
+          )}
+        </div>
 
-        {filteredContact.length == 0 ? <h1>No Data</h1> : null}
-        {error ? <h1>Something went wrong, please try again later</h1> : null}
-        <Pagination />
+        {filteredContact?.length == 0 && !loading ? (
+          <MakeItCentered>No Data</MakeItCentered>
+        ) : null}
+        {error && !loading ? (
+          <MakeItCentered>
+            Something went wrong, please try again later
+          </MakeItCentered>
+        ) : null}
+        {contactList?.length >= 10 ? <Pagination /> : null}
       </div>
     </Navigation>
   );
 }
 
-export async function getServerSideProps(context: any) {
-  const { offset } = context.query;
+// export async function getServerSideProps(context: any) {
+//   const { offset } = context.query;
 
-  try {
-    const { data } = await client.query({
-      query: GET_CONTACT_LIST,
-      variables: {
-        limit: 5,
-        offset: offset ? parseInt(offset) : 0,
-      },
-    });
+//   try {
+//     const { data } = await client.query({
+//       query: GET_CONTACT_LIST,
+//       variables: {
+//         limit: 10,
+//         offset: offset ? parseInt(offset) : 0,
+//         order_by: { created_at: 'desc' },
+//       },
+//     });
 
-    return { props: { data } };
-  } catch (error) {
-    return { props: { error: error } };
-  }
-}
+//     return { props: { data } };
+//   } catch (error) {
+//     return { props: { error: error } };
+//   }
+// }
