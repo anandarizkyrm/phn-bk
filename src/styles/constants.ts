@@ -3,6 +3,7 @@ export const colors = {
   secondaryDark: '#252525',
   white: '#e9f5f9',
   light: '#9da1a2',
+  darkred: 'darkred',
 };
 
 export const others = {

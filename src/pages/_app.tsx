@@ -1,12 +1,13 @@
 import Layout from '@/components/Layout';
 import type { AppProps } from 'next/app';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { Toaster } from 'react-hot-toast';
 import ContactContextProvider from '@/context/contacts';
 
 export const client = new ApolloClient({
   uri: process.env.NEXT_PUBLIC_API_URL,
   cache: new InMemoryCache(),
+  ssrMode: true,
 });
 export default function App({ Component, pageProps }: AppProps) {
   return (

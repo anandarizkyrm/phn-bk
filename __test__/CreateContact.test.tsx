@@ -2,14 +2,19 @@ import ContactForm from '@/components/molecules/ContactForm';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
+import { MockedProvider } from '@apollo/client/testing';
 
 describe('Create Validation Error', () => {
   it('displays validation error when phone number is invalid', async () => {
     await act(async () => {
-      render(<ContactForm />);
+      render(
+        <MockedProvider mocks={[]}>
+          <ContactForm />
+        </MockedProvider>
+      );
     });
 
-    const input = screen.getByPlaceholderText('Phone Number');
+    const input = screen.getByTestId('phone-number-field');
     fireEvent.change(input, { target: { value: 'not a phone number' } });
     fireEvent.submit(screen.getByTestId('submit-btn'));
 
@@ -19,7 +24,11 @@ describe('Create Validation Error', () => {
 
   it('displays validation error when name is not filled', async () => {
     await act(async () => {
-      render(<ContactForm />);
+      render(
+        <MockedProvider mocks={[]}>
+          <ContactForm />
+        </MockedProvider>
+      );
     });
 
     const input = screen.getByPlaceholderText('Last Name');
@@ -41,26 +50,33 @@ describe('Create Validation Error', () => {
 describe('Test Add and remove phone field', () => {
   it("adds a new phone number field when 'Add Number' is clicked", async () => {
     await act(async () => {
-      render(<ContactForm />);
+      render(
+        <MockedProvider mocks={[]}>
+          <ContactForm />
+        </MockedProvider>
+      );
     });
 
-    const addButton = screen.getByTestId('add-phone-number-field');
-    fireEvent.click(addButton);
-    fireEvent.click(addButton);
+    const addButton = screen.getAllByTestId('add-phone-number-field');
+    fireEvent.click(addButton[0]);
 
-    const newInput = screen.queryAllByPlaceholderText('Phone Number');
-    expect(newInput).toHaveLength(3);
+    const newInput = screen.getAllByTestId('phone-number-field');
+    expect(newInput).toHaveLength(2);
   });
 
   it("removes a phone number field when 'Remove Phone' is clicked", async () => {
     await act(async () => {
-      render(<ContactForm />);
+      render(
+        <MockedProvider mocks={[]}>
+          <ContactForm />
+        </MockedProvider>
+      );
     });
 
     const removeButton = screen.getByTestId('remove-phone-number-field');
     fireEvent.click(removeButton);
 
-    const removedInput = screen.queryAllByPlaceholderText('Phone Number');
+    const removedInput = screen.getAllByTestId('phone-number-field');
     expect(removedInput).toHaveLength(1);
   });
 });
