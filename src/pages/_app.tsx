@@ -1,6 +1,7 @@
 import Layout from '@/components/Layout';
 import type { AppProps } from 'next/app';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+
 import { Toaster } from 'react-hot-toast';
 import ContactContextProvider from '@/context/contacts';
 
