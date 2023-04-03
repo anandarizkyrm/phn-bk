@@ -1,5 +1,8 @@
 import useCreateContact from '@/hooks/useCreateContact';
 import { Controller, useFieldArray } from 'react-hook-form';
+import { FaPlus, FaTrash } from 'react-icons/fa';
+import Button from '../atoms/Button';
+import ErrorMessage from '../atoms/ErrorMessage';
 import Input from '../atoms/Input';
 
 export default function ContactForm() {
@@ -37,7 +40,9 @@ export default function ContactForm() {
           );
         }}
       />
-      {errors.first_name && <p>{errors.first_name.message}</p>}
+      {errors.first_name && (
+        <ErrorMessage message={errors.first_name.message} />
+      )}
       <Controller
         control={control}
         name="last_name"
@@ -51,50 +56,54 @@ export default function ContactForm() {
           );
         }}
       />
-      {errors.last_name && <p>{errors.last_name.message}</p>}
+      {errors.last_name && <ErrorMessage message={errors.last_name.message} />}
 
       {/* <Input placeholder="First Name" {...register('first_name')} />
       <Input placeholder="Last Name" {...register('last_name')} /> */}
 
-      <label>Phone:</label>
       {phoneFields.map((field, index) => (
-        <div key={field.id}>
-          <Controller
-            name={`phones.${index}.number`}
-            render={({ field }) => {
-              return (
-                <Input
-                  placeholder="Phone Number"
-                  type="text"
-                  {...register(field.name)}
-                />
-              );
-            }}
-            control={control}
-          />
-          {errors?.phones?.[index] && (
-            <p>{errors?.phones[index]?.number?.message}</p>
-          )}
-          <button
+        <div
+          style={{
+            display: 'flex',
+            gap: '6px',
+          }}
+          key={field.id}
+        >
+          <div style={{ flexGrow: 1 }}>
+            <Controller
+              name={`phones.${index}.number`}
+              render={({ field }) => {
+                return (
+                  <Input
+                    data-testid="phone-number-field"
+                    placeholder={`Phone Number ${index + 1}`}
+                    type="text"
+                    {...register(field.name)}
+                  />
+                );
+              }}
+              control={control}
+            />
+            {errors?.phones?.[index] && (
+              <ErrorMessage message={errors?.phones[index]?.number?.message} />
+            )}
+          </div>
+          <Button
             data-testid="add-phone-number-field"
             type="button"
+            icon={<FaPlus />}
             onClick={() => append({ number: '' })}
-          >
-            Add Number
-          </button>
-          <button
+          />
+          <Button
             data-testid="remove-phone-number-field"
             type="button"
             onClick={() => handleRemovePhoneNumber(index)}
-          >
-            Remove Phone
-          </button>
+            icon={<FaTrash />}
+          />
         </div>
       ))}
+      <Button wFull={true} data-testid="submit-btn" type="submit" text="Save" />
 
-      <button data-testid="submit-btn" type="submit">
-        Add
-      </button>
     </form>
   );
 }

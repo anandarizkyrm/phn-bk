@@ -70,7 +70,7 @@ const CardContact = ({ name, imageUrl, phoneNumber, id }: Props) => {
               onClick={() => handleAddOrRemoveFavorites(id)}
               style={{
                 color: favoritesContactList?.includes(id)
-                  ? 'darkred'
+                  ? colors.darkred
                   : colors.light,
               }}
             />
