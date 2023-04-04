@@ -15,6 +15,7 @@ const InputStyle = styled.input`
   outline: none;
   padding: 12px;
   margin: 4px 0px;
+  color: ${colors.light};
   box-sizing: border-box;
 `;
 

@@ -1,13 +1,21 @@
-import useCreateContact from '@/hooks/useCreateContact';
+import useCreateAndContact from '@/hooks/useCreateAndEditContact';
+import { ContactType } from '@/pages';
 import { Controller, useFieldArray } from 'react-hook-form';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import Button from '../atoms/Button';
 import ErrorMessage from '../atoms/ErrorMessage';
 import Input from '../atoms/Input';
 
-export default function ContactForm() {
+export default function ContactForm({
+  type = 'create',
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  contactData,
+}: {
+  type?: 'create' | 'edit';
+  contactData?: ContactType;
+}) {
   const { control, handleSubmit, onSubmit, register, errors } =
-    useCreateContact();
+    useCreateAndContact(type, contactData);
 
   const {
     fields: phoneFields,
@@ -103,7 +111,6 @@ export default function ContactForm() {
         </div>
       ))}
       <Button wFull={true} data-testid="submit-btn" type="submit" text="Save" />
-
     </form>
   );
 }

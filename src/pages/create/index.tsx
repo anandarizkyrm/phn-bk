@@ -5,10 +5,7 @@ import React from 'react';
 const index = () => {
   return (
     <Navigation title="Create Contact">
-      <div>
-        Create Contact
-        <ContactForm />
-      </div>
+      <ContactForm />
     </Navigation>
   );
 };
