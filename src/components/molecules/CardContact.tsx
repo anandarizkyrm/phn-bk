@@ -37,7 +37,6 @@ const PhoneFont = styled.span`
 const IconWrapper = styled.div`
   position: absolute;
   right: 12px;
-  cursor: pointer;
   gap: 12px;
   display: flex;
   top: 25%;
@@ -68,7 +67,6 @@ const CardContact = ({ name, imageUrl, phoneNumber, id }: Props) => {
               style={{ color: colors.secondaryDark }}
             />
             <FaHeart
-              data-testid="icon-heart"
               onClick={() => handleAddOrRemoveFavorites(id)}
               style={{
                 color: favoritesContactList?.includes(id)
