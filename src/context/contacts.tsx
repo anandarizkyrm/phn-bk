@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import storageHelper from '@/utils/localstorage.helper';
 import { useQuery } from '@apollo/client';
-import { GET_CONTACT_LIST } from '../../api/gql';
+import { GET_CONTACT_LIST } from '../api/gql';
 
 export const ContactListContext = React.createContext({} as any);
 

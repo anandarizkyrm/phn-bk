@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { GET_DETAIL } from '../../../api/gql';
+import { GET_DETAIL } from '../../api/gql';
 import { ApolloError } from '@apollo/client';
 import Image from 'next/image';
 import { colors, others } from '@/styles/constants';
@@ -10,6 +10,8 @@ import { MakeItCentered, RoundedImage } from '@/styles';
 import styled from '@emotion/styled';
 import CardNumberList from '@/components/molecules/CardNumberList';
 import Navigation from '@/components/organisms/Navigation';
+import { FaEdit } from 'react-icons/fa';
+import Link from 'next/link';
 
 const DetailContainer = styled.div`
   display: flex;
@@ -54,7 +56,10 @@ const index = ({
             ></Image>
           </RoundedImage>
           <Name>
-            {contact?.first_name} {contact?.last_name}
+            {contact?.first_name} {contact?.last_name}{' '}
+            <Link href={`/edit/${id}`}>
+              <FaEdit style={{ marginLeft: '6px' }} />
+            </Link>
           </Name>
         </DetailContainer>
 

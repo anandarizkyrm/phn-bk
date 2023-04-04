@@ -6,6 +6,7 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   type?: HTMLInputTypeAttribute;
   placeholder: string;
   className?: string;
+  
 };
 
 const InputStyle = styled.input`
@@ -15,6 +16,7 @@ const InputStyle = styled.input`
   outline: none;
   padding: 12px;
   margin: 4px 0px;
+  color: ${colors.light};
   box-sizing: border-box;
 `;
 

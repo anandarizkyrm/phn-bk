@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client';
 import toast from 'react-hot-toast';
-import { DELETE_CONTACT } from '../../api/gql';
+import { DELETE_CONTACT } from '../api/gql';
 
 function useDeleteContact(id: string) {
   const [deletePost, { error }] = useMutation(DELETE_CONTACT, {

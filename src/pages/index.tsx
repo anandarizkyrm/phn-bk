@@ -3,7 +3,6 @@ import { FaSearch, FaSpinner } from 'react-icons/fa';
 import { others } from '@/styles/constants';
 import { useContext, useEffect, useState } from 'react';
 import Navigation from '@/components/organisms/Navigation';
-import Pagination from '@/components/molecules/Pagination';
 import dynamic from 'next/dynamic';
 import { MakeItCentered } from '@/styles';
 import { ContactListContext } from '@/context/contacts';
@@ -14,6 +13,9 @@ const CardContact = dynamic(
     ssr: false,
   }
 );
+const Pagination = dynamic(() => import('@/components/molecules/Pagination'), {
+  ssr: false,
+});
 export interface ContactType {
   first_name: string;
   last_name: string;
@@ -23,9 +25,12 @@ export interface ContactType {
 
 export default function Home() {
   const [search, setSearch] = useState('');
-  const { contactList, loading, error } = useContext(ContactListContext);
+  const { contactList, loading, error, favoritesContactList } =
+    useContext(ContactListContext);
   const [filteredContact, setFilteredContact] =
     useState<ContactType[]>(contactList);
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   useEffect(() => {
     if (search.length > 0) {
@@ -48,8 +53,16 @@ export default function Home() {
     setFilteredContact(contactList);
   }, [contactList]);
 
+  const sortContact = [
+    ...filteredContact.filter((contact) =>
+      favoritesContactList.includes(contact.id)
+    ),
+    ...filteredContact.filter(
+      (contact) => !favoritesContactList.includes(contact.id)
+    ),
+  ];
   return (
-    <Navigation title="Contact">
+    <Navigation title="Contacts">
       <div>
         <InputWithIcon
           value={search}
@@ -63,15 +76,17 @@ export default function Home() {
               <FaSpinner />
             </MakeItCentered>
           ) : (
-            filteredContact.map((contact: ContactType) => (
-              <CardContact
-                key={contact.id}
-                id={contact.id}
-                name={contact.first_name + ' ' + contact.last_name}
-                imageUrl={others.avatar}
-                phoneNumber={contact?.phones[0]?.number}
-              />
-            ))
+            sortContact
+              ?.slice((page - 1) * limit, page * limit)
+              .map((contact: ContactType) => (
+                <CardContact
+                  key={contact.id}
+                  id={contact.id}
+                  name={contact.first_name + ' ' + contact.last_name}
+                  imageUrl={others.avatar}
+                  phoneNumber={contact?.phones[0]?.number}
+                />
+              ))
           )}
         </div>
 
@@ -83,27 +98,15 @@ export default function Home() {
             Something went wrong, please try again later
           </MakeItCentered>
         ) : null}
-        {contactList?.length >= 10 ? <Pagination /> : null}
+        {sortContact?.length >= 10 ? (
+          <Pagination
+            data={filteredContact}
+            page={page}
+            setPage={setPage}
+            limit={limit}
+          />
+        ) : null}
       </div>
     </Navigation>
   );
 }
-
-// export async function getServerSideProps(context: any) {
-//   const { offset } = context.query;
-
-//   try {
-//     const { data } = await client.query({
-//       query: GET_CONTACT_LIST,
-//       variables: {
-//         limit: 10,
-//         offset: offset ? parseInt(offset) : 0,
-//         order_by: { created_at: 'desc' },
-//       },
-//     });
-
-//     return { props: { data } };
-//   } catch (error) {
-//     return { props: { error: error } };
-//   }
-// }
