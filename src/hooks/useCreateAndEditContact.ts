@@ -5,6 +5,7 @@ import {
   ADD_CONTACT_WITH_PHONE,
   EDIT_CONTACT_,
   GET_CONTACT_LIST,
+  GET_DETAIL,
 } from '../api/gql';
 import { useMutation } from '@apollo/client';
 import toast from 'react-hot-toast';
@@ -33,7 +34,7 @@ function useCreateAndEditContact(
     onCompleted: () => {
       window.location.href = '/';
     },
-    refetchQueries: [{ query: GET_CONTACT_LIST }],
+    refetchQueries: [{ query: GET_DETAIL }],
   });
 
   const { contactList } = useContext(ContactListContext);
@@ -114,6 +115,7 @@ function useCreateAndEditContact(
     if (getIfNameExistsEdit.length > 0) {
       return toast.error('Name already exists');
     }
+
     return toast.promise(
       editContact({
         variables: {

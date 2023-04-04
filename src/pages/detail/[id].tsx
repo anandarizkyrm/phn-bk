@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { GET_DETAIL } from '../../api/gql';
-import { ApolloError } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import Image from 'next/image';
 import { colors, others } from '@/styles/constants';
-import { client } from '../_app';
 import { ContactType } from '../favorites';
 import { MakeItCentered, RoundedImage } from '@/styles';
 import styled from '@emotion/styled';
 import CardNumberList from '@/components/molecules/CardNumberList';
 import Navigation from '@/components/organisms/Navigation';
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit, FaSpinner } from 'react-icons/fa';
 import Link from 'next/link';
 
 const DetailContainer = styled.div`
@@ -26,22 +25,26 @@ const Name = styled.h3`
   margin-top: 18px;
 `;
 
-const index = ({
-  data,
-  error,
-}: {
-  data: { contact_by_pk: ContactType };
-  error: ApolloError | undefined;
-}) => {
+const index = () => {
   const router = useRouter();
   const { id } = router.query;
-
+  const { data, loading, error } = useQuery(GET_DETAIL, {
+    variables: {
+      id: id,
+    },
+  });
   const [contact, setContact] = useState<ContactType | undefined>();
 
   useEffect(() => {
     setContact(data?.contact_by_pk);
   }, [data]);
 
+  if (loading)
+    return (
+      <MakeItCentered>
+        <FaSpinner />
+      </MakeItCentered>
+    );
   return (
     <Navigation title="Back">
       <>
@@ -73,20 +76,3 @@ const index = ({
 };
 
 export default index;
-
-export async function getServerSideProps(context: any) {
-  const { id } = context.query;
-
-  try {
-    const { data } = await client.query({
-      query: GET_DETAIL,
-      variables: {
-        id: id,
-      },
-    });
-
-    return { props: { data } };
-  } catch (error) {
-    return { props: { error: error } };
-  }
-}
