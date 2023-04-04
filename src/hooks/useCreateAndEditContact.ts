@@ -78,7 +78,6 @@ function useCreateAndEditContact(
     mode: 'onSubmit',
     resolver: yupResolver(schema),
   });
-  console.log(contactList);
   const onSubmit = async (data: FieldContact) => {
     if (type === 'create') {
       const getIfNameExists = contactList.filter(

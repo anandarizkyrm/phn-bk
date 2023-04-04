@@ -26,7 +26,6 @@ const ContactContextProvider = (props: any) => {
   useEffect(() => {
     storageHelper.set('favoritesContactList', favoritesContactList);
   }, [favoritesContactList]);
-  console.log(data);
   return (
     <ContactListContext.Provider
       value={{

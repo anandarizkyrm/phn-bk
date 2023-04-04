@@ -42,7 +42,6 @@ const index = ({
     setContact(data?.contact_by_pk);
   }, [data]);
 
-  console.log(contact);
   return (
     <Navigation title="Back">
       <>
