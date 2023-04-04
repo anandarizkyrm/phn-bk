@@ -39,8 +39,18 @@ function useCreateAndEditContact(
 
   const { contactList } = useContext(ContactListContext);
   const schema = Yup.object().shape({
-    first_name: Yup.string().required(),
-    last_name: Yup.string().required(),
+    first_name: Yup.string()
+      .required()
+      .matches(
+        /^[a-zA-Z ]*$/,
+        'First name must contain only letters and spaces'
+      ),
+    last_name: Yup.string()
+      .required()
+      .matches(
+        /^[a-zA-Z ]*$/,
+        'Last name must contain only letters and spaces'
+      ),
     phones: Yup.array().of(
       Yup.object().shape({
         number: Yup.string()

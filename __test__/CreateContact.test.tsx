@@ -45,6 +45,34 @@ describe('Create Validation Error', () => {
     const error1 = await screen.findByText('last_name is a required field');
     expect(error1).toBeInTheDocument();
   });
+
+  it('displays validation error when name is contains special characters', async () => {
+    await act(async () => {
+      render(
+        <MockedProvider mocks={[]}>
+          <ContactForm />
+        </MockedProvider>
+      );
+    });
+
+    const input = screen.getByPlaceholderText('First Name');
+    fireEvent.change(input, { target: { value: '*7$' } });
+    fireEvent.submit(screen.getByTestId('submit-btn'));
+
+    const error = await screen.findByText(
+      'First name must contain only letters and spaces'
+    );
+    expect(error).toBeInTheDocument();
+
+    const input1 = screen.getByPlaceholderText('Last Name');
+    fireEvent.change(input1, { target: { value: '*tytyyty*' } });
+    fireEvent.submit(screen.getByTestId('submit-btn'));
+
+    const error1 = await screen.findByText(
+      'Last name must contain only letters and spaces'
+    );
+    expect(error1).toBeInTheDocument();
+  });
 });
 
 describe('Test Add and remove phone field', () => {
